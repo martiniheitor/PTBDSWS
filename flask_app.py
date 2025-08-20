@@ -1,41 +1,49 @@
-#Semana 01
-
-from flask import Flask, request, make_response, redirect, abort
+# flask_app.py
+from flask import Flask, request, url_for
 
 app = Flask(__name__)
 
-#Menu
-@app.route('/')
-def index():
-    return f"<h1>Hello World!</h1><h2>Disciplina PTBDSWS</h2>"
+#Home
+@app.route("/")
+def home():
+    return f"""
+    <h1>Avaliação contínua: Aula 030</h1>
+    <ul>
+        <li><a href="{url_for('home')}">Home</a></li>
+        <li><a href="{url_for('identificacao', nome='Heitor Martini', prontuario='PT3031845', instituicao='IFSP')}">Identificação</a></li>
+        <li><a href="{url_for('contexto_requisicao')}">Contexto da requisição</a></li>
+    </ul>
+    """
 
-#User
-@app.route('/user/<name>')
-def nome(name):
-    return f"<h1>Hello, {name}!</h1>"
+#Identificação
+@app.route("/user/<nome>/<prontuario>/<instituicao>")
+def identificacao(nome, prontuario, instituicao):
+    return f"""
+    <h1>Avaliação contínua: Aula 030</h1>
 
-#Contexto requisição
-@app.route('/contextorequisicao')
+    <h2><b>Aluno:</b> {nome}</h2>
+    <h2><b>Prontuário:</b> {prontuario}</h2>
+    <h2><b>Instituição:</b> {instituicao}</h2>
+
+    <p><a href="{url_for('home')}">Voltar</a></p>
+    """
+
+#Contexto da requisição
+@app.route("/contextorequisicao")
 def contexto_requisicao():
-    user_agent = request.headers.get('User-Agent');
-    return '<p>Your browser is {}</p>'.format(user_agent);
+    user_agent = request.headers.get("User-Agent", "desconhecido")
+    remote_ip  = request.remote_addr or "desconhecido"
+    host       = request.host
 
-#Codigo status diferente
-@app.route('/codigostatusdiferente')
-def codigos_status_diferente():
-    return make_response('Bad request', 400)
+    return f"""
+    <h1>Avaliação contínua: Aula 030</h1>
 
-#Objeto resposta
-@app.route('/objetoresposta')
-def objetoresposta():
-    return '<h1>This document carries a cookie!</h1>'
+    <h2><b>Seu navegador é:</b> {user_agent}</h2>
+    <h2><b>O IP do computador remoto é:</b> {remote_ip}</h2>
+    <h2><b>O host da aplicação é:</b> {host}</h2>
 
-#Redirecionamento
-@app.route('/redirecionamento')
-def redirecionamento():
-    return redirect('https://ptb.ifsp.edu.br/')
+    <p><a href="{url_for('home')}">Voltar</a></p>
+    """
 
-#Abortar
-@app.route('/abortar')
-def abortar():
-    abort(404)
+if __name__ == "__main__":
+    app.run(debug=True)
