@@ -1,49 +1,27 @@
-# flask_app.py
-from flask import Flask, request, url_for
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 #Home
-@app.route("/")
-def home():
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
-    <ul>
-        <li><a href="{url_for('home')}">Home</a></li>
-        <li><a href="{url_for('identificacao', nome='Heitor Martini', prontuario='PT3031845', instituicao='IFSP')}">Identificação</a></li>
-        <li><a href="{url_for('contexto_requisicao')}">Contexto da requisição</a></li>
-    </ul>
-    """
+@app.route('/')
+def index():
+    current_time = datetime.utcnow()
+    return render_template('index.html', current_time=current_time)
 
-#Identificação
-@app.route("/user/<nome>/<prontuario>/<instituicao>")
-def identificacao(nome, prontuario, instituicao):
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
+#User
+@app.route('/user/<name>')
+def user(name):
+    return render_template('user.html', name=name)
 
-    <h2><b>Aluno:</b> {nome}</h2>
-    <h2><b>Prontuário:</b> {prontuario}</h2>
-    <h2><b>Instituição:</b> {instituicao}</h2>
-
-    <p><a href="{url_for('home')}">Voltar</a></p>
-    """
-
-#Contexto da requisição
-@app.route("/contextorequisicao")
-def contexto_requisicao():
-    user_agent = request.headers.get("User-Agent", "desconhecido")
-    remote_ip  = request.remote_addr or "desconhecido"
-    host       = request.host
-
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
-
-    <h2><b>Seu navegador é:</b> {user_agent}</h2>
-    <h2><b>O IP do computador remoto é:</b> {remote_ip}</h2>
-    <h2><b>O host da aplicação é:</b> {host}</h2>
-
-    <p><a href="{url_for('home')}">Voltar</a></p>
-    """
+#Not found 404
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     app.run(debug=True)
