@@ -9,31 +9,35 @@
 {% endblock %}
 
 {% block navbar %}
-<nav class="navbar navbar-inverse" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Avaliação contínua: <strong>Aula 040</strong></a>
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Flasky</strong></a>
+        </div>
+        <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('main') }}">Home</a></li>
+        </ul>
+        </div>
     </div>
-    <div class="collapse navbar-collapse" id="nav-collapse">
-      <ul class="nav navbar-nav">
-        <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('identificacao', name='Heitor Martini', prontuario='PT3031845', instituicao='IFSP') }}">Identificação</a></li>
-        <li><a href="{{ url_for('contexto', name='Heitor Martini') }}">Contexto da requisição</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+</div>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  {% block page_content %}{% endblock %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
 
