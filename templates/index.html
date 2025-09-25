@@ -1,34 +1,44 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky{% endblock %}
 
 {% block page_content %}
-    <section>
-		<h1>Olá, {% if name and last_name %}{{ name + ' ' + last_name }}{% else %}Estranho{% endif %}!</h1>
-		<h3>A sua instituição de ensino é {{ institution }}</h3>
-		<h3>Está cursando a disciplina de {{ course }}</h3>
-		<br>
-		<h4>O IP do computador remoto é: {{ remote_addr }}</h4>
-		<h4>O host da aplicação é: {{ host }}</h4>
-        <hr>
-    </section>
-    <div class="form-group required">
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            {{ form.name.label(class_="control-label") }}
-            {{ form.name(class_='form-control') }}
-			<br>
-			{{ form.last_name.label(class_='control-label') }}
-			{{ form.last_name(class_='form-control') }}
-			<br>
-			{{ form.institution.label(class_='control-label') }}
-			{{ form.institution(class_='form-control') }}
-			<br>
-			{{ form.course.label(class_='control-label') }}
-			{{ form.course(class_='form-control') }}
-			<br>
-            {{ form.submit(class_="btn btn-default") }}
-        </form>
-    </div>
-	<br>
-	<p>The local date and time is {{ moment(current_time).format('LLL') }}</p>
-	<p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+<div class="page-header">
+    <h1>Olá, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
+    {% if not known %}
+    <p>Prazer em conhecê-lo!</p>
+    {% else %}
+    <p>Feliz em vê-lo novamente!</p>
+    {% endif %}
+</div>
+{{ wtf.quick_form(form) }}
+
+<h2>Relação de usuários cadastrados</h2>
+{% if users %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome do usuário</th>
+                <th>Função</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>
+                    {% if user.role %}
+                        {{ user.role.name }}
+                    {% else %}
+                        <span>Sem função</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nenhum usuário cadastrado ainda.</p>
+{% endif %}
 {% endblock %}
