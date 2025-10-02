@@ -42,12 +42,13 @@ class User(db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
-
-
+    def __repr__(self):
+        return '<User %r>' % self.username
 
 
 class NameForm(FlaskForm):
-    name = StringField('Qual o seu nome?', validators=[DataRequired()])
+    name = StringField('Qual seu nome?', validators=[DataRequired()])
+    role = SelectField('Função?:', coerce=int)
     submit = SubmitField('Submit')
 
 
@@ -59,19 +60,14 @@ def make_shell_context():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
+    form.role.choices = [(role.id, role.name)
+                         for role in Role.query.order_by(Role.name).all()]
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.name.data).first()
         if user is None:
-
-            user_role = Role.query.filter_by(name='User').first()
-            if user_role is None:
-
-                user_role = Role(name='User')
-                db.session.add(user_role)
-                db.session.commit()
-
-
-            user = User(username=form.name.data, role=user_role)
+            role = Role.query.get(form.role.data)
+            user = User(username=form.name.data, role=role)
             db.session.add(user)
             db.session.commit()
             session['known'] = False
@@ -80,14 +76,19 @@ def index():
         session['name'] = form.name.data
         return redirect(url_for('index'))
 
+    users_list = User.query.join(Role).order_by(Role.name, User.username).all()
+    user_count = User.query.count()
+    roles_list = Role.query.order_by(Role.name).all()
+    role_count = Role.query.count()
 
-    users_list = User.query.join(Role).order_by(Role.name).all()
-
-    return render_template('index.html', form=form, name=session.get('name'),
+    return render_template('index.html',
+                           form=form,
+                           name=session.get('name'),
                            known=session.get('known', False),
-                           users=users_list)
-
-
+                           users=users_list,
+                           user_count=user_count,
+                           roles=roles_list,
+                           role_count=role_count)
 
 if __name__ == "__main__":
     app.run(debug=True)
