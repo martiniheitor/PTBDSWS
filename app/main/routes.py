@@ -30,5 +30,8 @@ def index():
             session['known'] = True
         session['name'] = form.name.data
         return redirect(url_for('main.index'))
+
+    users_list = User.query.order_by(User.username).all()
+
     return render_template('index.html', form=form, name=session.get('name'),
-                           known=session.get('known', False))
+                           known=session.get('known', False), users = users_list)
