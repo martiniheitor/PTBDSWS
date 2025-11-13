@@ -1,10 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Email
-
+from wtforms.validators import DataRequired
 
 
 class NameForm(FlaskForm):
-    name = StringField("Qual é o seu nome?", validators=[DataRequired()])
-    email = StringField("Qual é o seu email (Envio de notficação do novo usuário)?", validators=[DataRequired(), Email()])
-    submit = SubmitField("Submit")
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
