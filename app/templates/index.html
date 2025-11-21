@@ -6,4 +6,25 @@
 <div class="page-header">
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
 </div>
+<h2>Relação de usuários cadastrados</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome do usuário</th>
+            <th>E-mail</th>
+            <th>Confirmado?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.confirmed }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
