@@ -11,7 +11,6 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chave_secreta_prova_web'
 
-# Configuração do Banco de Dados SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -20,7 +19,6 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
 
-# --- MODELOS (Banco de Dados) ---
 class Professor(db.Model):
     __tablename__ = 'professores'
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +28,6 @@ class Professor(db.Model):
     def __repr__(self):
         return f'<Professor {self.name}>'
 
-# --- FORMULÁRIOS ---
 class ProfessorForm(FlaskForm):
     name = StringField('Cadastre o novo Professor:', validators=[DataRequired()])
     discipline = SelectField('Disciplina associada:', choices=[
@@ -52,18 +49,15 @@ def index():
 def professores():
     form = ProfessorForm()
     if form.validate_on_submit():
-        # Cria novo professor
         novo_professor = Professor(name=form.name.data, discipline=form.discipline.data)
         db.session.add(novo_professor)
         db.session.commit()
         flash('Professor cadastrado com sucesso!')
         return redirect(url_for('professores'))
 
-    # Recupera todos os professores do banco para exibir na tabela
     todos_professores = Professor.query.all()
     return render_template('professores.html', form=form, professores=todos_professores)
 
-# Rotas para funcionalidades não desenvolvidas (para cumprir o requisito)
 @app.route('/disciplinas')
 @app.route('/alunos')
 @app.route('/cursos')
@@ -80,7 +74,6 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'), 500
 
-# Criar o banco de dados se não existir (Executa uma vez ao iniciar)
 with app.app_context():
     db.create_all()
 
