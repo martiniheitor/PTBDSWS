@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Cadastro de Professores</h1>
+</div>
+
+<!-- Formulário -->
+{{ wtf.quick_form(form) }}
+
+<br>
+<!-- Tabela de Listagem -->
+<h2>Relação de professores cadastrados</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Professor</th>
+            <th>Disciplina</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for professor in professores %}
+        <tr>
+            <td>{{ professor.name }}</td>
+            <td>{{ professor.discipline }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
